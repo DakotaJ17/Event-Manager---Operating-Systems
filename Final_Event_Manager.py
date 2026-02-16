@@ -163,27 +163,5 @@ def main_menu():
 if __name__ == "__main__":
     main_menu()
 
-def main_menu():
-    """Updated main menu to include the Search option."""
-    while True:
-        print("\nEvent Management System Menu:")
-        print("1. Create an Event")
-        print("2. Register an Attendee")
-        print("3. List All Events")
-        print("4. Search for an Event")  # New Option
-        print("5. Exit")
-        choice = input("Enter your choice (1-5): ")
 
-        if choice == '1':
-            create_event()
-        elif choice == '2':
-            register_attendee()
-        elif choice == '3':
-            list_events()
-        elif choice == '4':
-            search_events()  # Call the new function
-        elif choice == '5':
-            print("Exiting program. Goodbye!")
-            break
-        else:
-            print("Invalid choice. Please enter a number between 1 and 5.")
+
