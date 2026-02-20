@@ -8,6 +8,8 @@ def create_event():
         return
 
     name = input("Enter Event Name: ")
+    date = input("Enter Event Date (e.g., YYYY-MM-DD): ")
+    
     try:
         max_attendees = int(input("Enter Maximum Attendees: "))
     except ValueError:
@@ -42,6 +44,7 @@ def search_events():
              print(f"\n--- Event Found ---")
              print(f"ID: {search_id}")
              print(f"Name: {event['name']}")
+             print(f"Date: {event['date']}")
              print(f"Status: {len(event['attendees'])}/{event['max_attendees']} attendees registered")
              print(f"Attendee List: {', '.join(event['attendees']) if event['attendees'] else 'Empty'}")
         else:
@@ -98,4 +101,5 @@ def cancel_event():
 
     event['status'] = 'canceled'
     print(f"Event '{event['name']}' (ID: ) {event_id}) has been canceled.")
+
 
