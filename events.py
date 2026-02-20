@@ -16,6 +16,7 @@ def create_event():
 
     events[event_id] = {
         'name': name,
+        'date': date,
         'max_attendees': max_attendees,
         'attendees': [], # List to store registered attendees
         'status': 'active'
@@ -97,3 +98,4 @@ def cancel_event():
 
     event['status'] = 'canceled'
     print(f"Event '{event['name']}' (ID: ) {event_id}) has been canceled.")
+
