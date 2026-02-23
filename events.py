@@ -111,5 +111,51 @@ def cancel_event():
     print(f"Event '{event['name']}' (ID: ) {event_id}) has been canceled.")
 
 
+def edit_event():
+    """Edits an existing event by ID (soft update)."""
+    event_id = input("Enter the Event ID to edit: ")
+    if event_id not in events:
+        print("Error: Event ID not found")
+        return
+
+    print(f"What would you like to edit? ")
+    print(f"1. Name")
+    print(f"2. Date")
+    print(f"3. Time")
+    choice = input("Enter your choice (1-3): ")
+
+    if choice == '1':
+        events[event_id]['name'] = input("Enter new name: ")
+
+    elif choice == '2':
+        print("Enter the new Event Date:")
+        events[event_id]['month'] = input("Month: ")
+
+        # --- Day Validation ---
+        while True:
+            day = input("Day (1-31): ")
+            if day.isdigit() and 1 <= int(day) <= 31:
+                events[event_id]['day'] = day
+                break  # Exits the loop if the input is valid
+            else:
+                print("Error: Please enter a valid number for the day (1-31).")
+
+        # --- Year Validation ---
+        while True:
+            year = input("Year (YYYY): ")
+            if year.isdigit() and len(year) == 4:
+                events[event_id]['year'] = year
+                break  # Exits the loop if the input is valid
+            else:
+                print("Error: Please enter a valid 4-digit year.")
+
+    elif choice == '3':
+        events[event_id]['time'] = input("Enter new time: ")
+
+    else:
+        print("Invalid choice.")
+        return  # Stops the function early so the success message doesn't print
+
+    print("Event updated successfully!")
 
 
