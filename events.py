@@ -8,7 +8,11 @@ def create_event():
         return
 
     name = input("Enter Event Name: ")
-    date = input("Enter Event Date and Time (e.g., YYYY-MM-DD, 12:00): ")
+    print(f"Enter the Event Date: ")
+    month = input(f"Month: ")
+    day = input(f"Day: ")
+    year = input(f"Year: ")
+    time = input(f"Time: ")
     
     try:
         max_attendees = int(input("Enter Maximum Attendees: "))
@@ -18,12 +22,15 @@ def create_event():
 
     events[event_id] = {
         'name': name,
-        'date': date,
+        'month': month,
+        'day': day,
+        'year': year,
+        'time': time,
         'max_attendees': max_attendees,
         'attendees': [], # List to store registered attendees
         'status': 'active'
     }
-    print(f"Event '{name}' created successfully with ID {event_id} and capacity {max_attendees}.")
+    print(f"Event '{name}', on {month} {day}, {year}, created successfully with ID {event_id} and capacity {max_attendees}.")
 
 def search_events():
     """Allows the user to search for events by ID or Name."""
@@ -44,7 +51,7 @@ def search_events():
              print(f"\n--- Event Found ---")
              print(f"ID: {search_id}")
              print(f"Name: {event['name']}")
-             print(f"Date: {event['date']}")
+             print(f"Date: {event['month']} {event['day']}, {event['year']} at {event['time']}")
              print(f"Status: {len(event['attendees'])}/{event['max_attendees']} attendees registered")
              print(f"Attendee List: {', '.join(event['attendees']) if event['attendees'] else 'Empty'}")
         else:
@@ -78,6 +85,7 @@ def list_events():
     for event_id, event in events.items():
         print(f"\nID: {event_id}")
         print(f"Name: {event['name']}")
+        print(f"Date: {event['month']} {event['day']}, {event['year']} at {event['time']}")
         print(f"Capacity: {len(event['attendees'])}/{event['max_attendees']}")
         print(f"Spots Left: {event['max_attendees'] - len(event['attendees'])}")
         print(f"Attendees: {', '.join(event['attendees']) if event['attendees'] else 'None'}")
@@ -101,6 +109,7 @@ def cancel_event():
 
     event['status'] = 'canceled'
     print(f"Event '{event['name']}' (ID: ) {event_id}) has been canceled.")
+
 
 
 
