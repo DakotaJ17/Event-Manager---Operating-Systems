@@ -8,7 +8,7 @@ def create_event():
         return
 
     name = input("Enter Event Name: ")
-    date = input("Enter Event Date (e.g., YYYY-MM-DD): ")
+    date = input("Enter Event Date and Time (e.g., YYYY-MM-DD, 12:00): ")
     
     try:
         max_attendees = int(input("Enter Maximum Attendees: "))
@@ -101,5 +101,6 @@ def cancel_event():
 
     event['status'] = 'canceled'
     print(f"Event '{event['name']}' (ID: ) {event_id}) has been canceled.")
+
 
 
