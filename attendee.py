@@ -1,14 +1,14 @@
-from database import events
+import database
 
 def register_attendee():
 
     """Prompts the user to register multiple attendees for an existing event."""
     event_id = input("Enter the Event ID for registration: ")
-    if event_id not in events:
+    if event_id not in database.events:
         print("Error: Event ID not found.")
         return
 
-    event = events[event_id]
+    event = database.events[event_id]
 
     print(f"Registering for: {event['name']} (Capacity: {len(event['attendees'])}/{event['max_attendees']})")
     print("Type 'done' as the name to finish registering attendees.")
@@ -33,6 +33,9 @@ def register_attendee():
             continue
 
         event['attendees'].append(attendee_name)
+
+        database.save_events(database.events)
+
         print(f"Attendee {attendee_name} registered successfully. "
 
                 f"({len(event['attendees'])}/{event['max_attendees']})")
@@ -43,11 +46,11 @@ def remove_attendee():
 
     event_id = input("Enter the Event ID to remove an attendee from: ")
 
-    if event_id not in events:
+    if event_id not in database.events:
         print("Error: Event ID not found.")
         return
 
-    event = events[event_id]
+    event = database.events[event_id]
 
     if not event['attendees']:
         print("No attendees are currently registered for this event.")
@@ -64,5 +67,8 @@ def remove_attendee():
         return
 
     event['attendees'].remove(attendee_name)
+
+    database.save_events(database.events)
+
     print(f"Attendee {attendee_name} has been removed successfully. "
           f"({len(event['attendees'])}/{event['max_attendees']})")
