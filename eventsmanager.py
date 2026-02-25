@@ -11,8 +11,9 @@ def main_menu():
         print("4. List All Events")
         print("5. Cancel an Event")
         print("6. Remove an Attendee")
-        print("7. Exit")
-        choice = input("Enter your choice (1-7): ")
+        print("7. Filter By Event")
+        print("8. Exit")
+        choice = input("Enter your choice (1-8): ")
 
         if choice == '1':
             events.create_event()
@@ -26,11 +27,14 @@ def main_menu():
             events.cancel_event()
         elif choice == '6':
             attendee.remove_attendee()
-        elif choice == '7':
+        elif choice == "7":
+            events.list_by_type()
+        elif choice == '8':
             print("Exiting program. Goodbye!")
             break
         else:
-            print("Invalid choice. Please enter a number between 1 and 7.")
+            print("Invalid choice. Please enter a number between 1 and 8.")
 if __name__ == "__main__":
 
-    main_menu()
+    main_menu() 
+
