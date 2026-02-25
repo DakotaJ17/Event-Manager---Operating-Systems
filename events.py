@@ -1,19 +1,33 @@
 from database import events
 
+
 def create_event():
-    """Prompts the user to create a new event."""
     event_id = input("Enter a unique Event ID: ")
     if event_id in events:
         print("Error: Event ID already exists. Please use a unique ID.")
         return
 
     name = input("Enter Event Name: ")
-    print(f"Enter the Event Date: ")
-    month = input(f"Month: ")
-    day = input(f"Day: ")
-    year = input(f"Year: ")
-    time = input(f"Time: ")
-    
+
+    # Updated Selection menu
+    print("\nSelect Event Type:")
+    print("1. Workshop | 2. Conference | 3. Concert | 4. Social | 5. Wedding | 6. Other")
+    type_choice = input("Enter choice (1-6): ")
+
+    types = {
+        "1": "Workshop",
+        "2": "Conference",
+        "3": "Concert",
+        "4": "Social",
+        "5": "Wedding"
+    }
+
+    # Logic for "Other" or custom input
+    if type_choice == "6":
+        event_type = input("Enter the custom event type: ").capitalize()
+    else:
+        event_type = types.get(type_choice, "General")
+
     try:
         max_attendees = int(input("Enter Maximum Attendees: "))
     except ValueError:
@@ -21,95 +35,89 @@ def create_event():
         return
 
     events[event_id] = {
-        'name': name,
-        'month': month,
-        'day': day,
-        'year': year,
-        'time': time,
-        'max_attendees': max_attendees,
-        'attendees': [], # List to store registered attendees
-        'status': 'active'
+        "name": name,
+        "type": event_type,
+        "max_attendees": max_attendees,
+        "attendees": [],
+        "status": "active"
     }
-    print(f"Event '{name}', on {month} {day}, {year}, created successfully with ID {event_id} and capacity {max_attendees}.")
+    print(f"Event '{name}' ({event_type}) created successfully with ID {event_id}.")
+
 
 def search_events():
-    """Allows the user to search for events by ID or Name."""
     if not events:
         print("No events available to search.")
         return
 
-    print("\nSearch By:")
-    print("1. Event ID")
-    print("2. Event Name")
-    criteria = input("Enter your choice (1-2): ")
+    print("\nSearch By: 1. ID | 2. Name | 3. Type")
+    criteria = input("Enter your choice (1-3): ")
 
-    if criteria == '1':
-        # Search by exact Event ID
+    if criteria == "1":
         search_id = input("Enter Event ID: ")
         if search_id in events:
-             event = events[search_id]
-             print(f"\n--- Event Found ---")
-             print(f"ID: {search_id}")
-             print(f"Name: {event['name']}")
-             print(f"Date: {event['month']} {event['day']}, {event['year']} at {event['time']}")
-             print(f"Status: {len(event['attendees'])}/{event['max_attendees']} attendees registered")
-             print(f"Attendee List: {', '.join(event['attendees']) if event['attendees'] else 'Empty'}")
+            display_event_details(search_id, events[search_id])
         else:
-            print(f"Error: No event found with ID '{search_id}'.")
+            print(f"Error: No event found with ID {search_id}.")
 
-    elif criteria == '2':
-        # Search by Name (partial match, case-insensitive)
-        search_name = input("Enter Event Name (or part of it): ").lower()
+    elif criteria == "2" or criteria == "3":
+        query = input("Enter search term: ").lower()
         found = False
-
-        print("\n--- Search Results ---")
-        for event_id, event in events.items():
-            if search_name in event['name'].lower():
+        # Search through both 'name' and 'type' keys
+        for eid, info in events.items():
+            if query in info['name'].lower() or query in info['type'].lower():
                 print(
-                    f"ID: {event_id} | Name: {event['name']} | Spots Left: {event['max_attendees'] - len(event['attendees'])}")
+                    f"ID: {eid} | Name: {info['name']} | Type: {info['type']} | Spots: {info['max_attendees'] - len(info['attendees'])}")
                 found = True
+        if not found:
+            print("No matching events found.")
 
-            if not found:
-                print("No events found matching that name.")
 
-        else:
-            print("Invalid choice.")
+def display_event_details(eid, event):
+    """Helper function to keep code clean."""
+    print(f"\n--- Event Details ---")
+    print(f"ID: {eid} | Type: {event['type']}")
+    print(f"Name: {event['name']} | Status: {event['status']}")
+    print(f"Registered: {len(event['attendees'])}/{event['max_attendees']}")
+
 
 def list_events():
-    """Displays all created events and their details."""
     if not events:
         print("No events found.")
         return
+    for eid, info in events.items():
+        print(f"[{info['type']}] ID: {eid} - {info['name']} ({len(info['attendees'])}/{info['max_attendees']})")
 
-    print("\nCurrent Events:")
-    for event_id, event in events.items():
-        print(f"\nID: {event_id}")
-        print(f"Name: {event['name']}")
-        print(f"Date: {event['month']} {event['day']}, {event['year']} at {event['time']}")
-        print(f"Capacity: {len(event['attendees'])}/{event['max_attendees']}")
-        print(f"Spots Left: {event['max_attendees'] - len(event['attendees'])}")
-        print(f"Attendees: {', '.join(event['attendees']) if event['attendees'] else 'None'}")
 
 def cancel_event():
-    """Cancels an existing event by ID (soft delete)."""
     event_id = input("Enter the Event ID to cancel: ")
     if event_id not in events:
-        print("Error: Event ID not found")
+        print("Error: Event ID not found.")
+        return
+    events[event_id]["status"] = "canceled"
+    print(f"Event {event_id} has been canceled.")
+
+
+def list_by_type():
+    """Displays events filtered by a specific category."""
+    if not events:
+        print("No events available.")
         return
 
-    event = events[event_id]
-    if event['status'] == 'canceled':
-        print(f"Event '{event['name']}' is already canceled.")
-        return
+    # Show available types to help the user
+    print("Available types: Workshop, Conference, Concert, Social, Wedding, Other")
+    search_type = input("Enter the type of event to filter by: ").capitalize()
 
-    confirm = input(f"Are you sure you want to cancel '{event['name']}'? (y/n): ").strip().lower()
-    if confirm != 'y':
-        print("Cancel operation aborted.")
-        return
+    found = False
+    print(f"\n--- {search_type} Events ---")
 
-    event['status'] = 'canceled'
-    print(f"Event '{event['name']}' (ID: ) {event_id}) has been canceled.")
+    for event_id, event in events.items():
+        if event.get("type") == search_type:
+            print(
+                f"ID: {event_id} | Name: {event['name']} | Capacity: {len(event['attendees'])}/{event['max_attendees']}")
+            found = True
 
+    if not found:
+        print(f"No events found with type: {search_type}")
 
 def edit_event():
     """Edits an existing event by ID (soft update)."""
@@ -157,5 +165,6 @@ def edit_event():
         return  # Stops the function early so the success message doesn't print
 
     print("Event updated successfully!")
+
 
 
