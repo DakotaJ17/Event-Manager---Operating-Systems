@@ -78,6 +78,7 @@ def list_events():
     for event_id, event in database.events.items():
         print(f"\nID: {event_id}")
         print(f"Name: {event['name']}")
+        print(f"Date: {event['date']}")
         print(f"Capacity: {len(event['attendees'])}/{event['max_attendees']}")
         print(f"Spots Left: {event['max_attendees'] - len(event['attendees'])}")
         print(f"Attendees: {', '.join(event['attendees']) if event['attendees'] else 'None'}")
@@ -101,6 +102,7 @@ def cancel_event():
     database.save_events(database.events)
 
     print(f"Event '{event['name']}' (ID: ) {event_id}) has been canceled.")
+
 
 
 
