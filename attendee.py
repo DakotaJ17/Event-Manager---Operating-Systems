@@ -37,4 +37,38 @@ def register_attendee():
         database.save_events(database.events)
 
         print(f"Attendee {attendee_name} registered successfully. "
+
                 f"({len(event['attendees'])}/{event['max_attendees']})")
+
+def remove_attendee():
+
+    """Prompts the user to remove an attendee from an existing event."""
+
+    event_id = input("Enter the Event ID to remove an attendee from: ")
+
+    if event_id not in database.events:
+        print("Error: Event ID not found.")
+        return
+
+    event = database.events[event_id]
+
+    if not event['attendees']:
+        print("No attendees are currently registered for this event.")
+        return
+
+    print(f"Attendees for {event['name']}:")
+    for attendee_name in event['attendees']:
+        print(f"- {attendee_name}")
+
+    attendee_name = input("Enter the name of the attendee to remove: ").strip()
+
+    if attendee_name not in event['attendees']:
+        print(f"Error: {attendee_name} is not registered for this event.")
+        return
+
+    event['attendees'].remove(attendee_name)
+
+    database.save_events(database.events)
+
+    print(f"Attendee {attendee_name} has been removed successfully. "
+          f"({len(event['attendees'])}/{event['max_attendees']})")
