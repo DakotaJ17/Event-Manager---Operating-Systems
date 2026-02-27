@@ -163,33 +163,12 @@ def edit_event():
 
     elif choice == '2':
         print("Enter the new Event Date:")
-        database.events[event_id]['month'] = input("Month: ")
-
-        # --- Day Validation ---
-        while True:
-            day = input("Day (1-31): ")
-            if day.isdigit() and 1 <= int(day) <= 31:
-                database.events[event_id]['day'] = day
-                break  # Exits the loop if the input is valid
-            else:
-                print("Error: Please enter a valid number for the day (1-31).")
-
-        # --- Year Validation ---
-        while True:
-            year = input("Year (YYYY): ")
-            if year.isdigit() and len(year) == 4:
-                database.events[event_id]['year'] = year
-                break  # Exits the loop if the input is valid
-            else:
-                print("Error: Please enter a valid 4-digit year.")
-
-    elif choice == '3':
-        database.events[event_id]['time'] = input("Enter new time: ")
-
+        database.events[event_id]['date'] = input("Date(YYYY-MM-DD, 12:00): ")
     else:
         print("Invalid choice.")
         return  # Stops the function early so the success message doesn't print
     database.save_events(database.events)
 
     print("Event updated successfully!")
+
 
