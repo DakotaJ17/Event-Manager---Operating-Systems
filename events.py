@@ -1,13 +1,14 @@
-from database import events
+import database
 
 
 def create_event():
     event_id = input("Enter a unique Event ID: ")
-    if event_id in events:
+    if event_id in database.events:
         print("Error: Event ID already exists. Please use a unique ID.")
         return
 
     name = input("Enter Event Name: ")
+    date = input("Enter Event Date and Time (e.g., YYYY-MM-DD, 12:00): ")
 
     # Updated Selection menu
     print("\nSelect Event Type:")
@@ -34,18 +35,21 @@ def create_event():
         print("Error: Maximum attendees must be a number.")
         return
 
-    events[event_id] = {
+    database.events[event_id] = {
         "name": name,
+        "date": date,
         "type": event_type,
         "max_attendees": max_attendees,
         "attendees": [],
         "status": "active"
     }
+
+
     print(f"Event '{name}' ({event_type}) created successfully with ID {event_id}.")
 
 
 def search_events():
-    if not events:
+    if not database.events:
         print("No events available to search.")
         return
 
@@ -54,8 +58,8 @@ def search_events():
 
     if criteria == "1":
         search_id = input("Enter Event ID: ")
-        if search_id in events:
-            display_event_details(search_id, events[search_id])
+        if search_id in database.events:
+            display_event_details(search_id, database.events[search_id])
         else:
             print(f"Error: No event found with ID {search_id}.")
 
@@ -63,7 +67,7 @@ def search_events():
         query = input("Enter search term: ").lower()
         found = False
         # Search through both 'name' and 'type' keys
-        for eid, info in events.items():
+        for eid, info in database.events.items():
             if query in info['name'].lower() or query in info['type'].lower():
                 print(
                     f"ID: {eid} | Name: {info['name']} | Type: {info['type']} | Spots: {info['max_attendees'] - len(info['attendees'])}")
@@ -81,25 +85,46 @@ def display_event_details(eid, event):
 
 
 def list_events():
-    if not events:
+    """Displays all created events and their details."""
+    if not database.events:
         print("No events found.")
         return
-    for eid, info in events.items():
-        print(f"[{info['type']}] ID: {eid} - {info['name']} ({len(info['attendees'])}/{info['max_attendees']})")
 
+    print("\nCurrent Events:")
+    for event_id, event in database.events.items():
+        print(f"\nID: {event_id}")
+        print(f"Name: {event['name']}")
+        print(f"Date: {event['date']}")
+        print(f"Capacity: {len(event['attendees'])}/{event['max_attendees']}")
+        print(f"Spots Left: {event['max_attendees'] - len(event['attendees'])}")
+        print(f"Attendees: {', '.join(event['attendees']) if event['attendees'] else 'None'}")
 
 def cancel_event():
+    """Cancels an existing event by ID (Hard Delete)"""
     event_id = input("Enter the Event ID to cancel: ")
-    if event_id not in events:
-        print("Error: Event ID not found.")
+    if event_id not in database.events:
+        print("Error: Event ID not found")
         return
-    events[event_id]["status"] = "canceled"
-    print(f"Event {event_id} has been canceled.")
+
+    event = database.events[event_id]
+
+    confirm = input(f"Are you sure you want to cancel '{event['name']}'? (y/n): ").strip().lower()
+    if confirm != 'y':
+        print("Cancel operation aborted.")
+        return
+
+    del database.events[event_id]
+
+    database.save_events(database.events)
+
+    print(f"Event '{event['name']}' (ID: ) {event_id}) has been canceled.")
+
+
 
 
 def list_by_type():
     """Displays events filtered by a specific category."""
-    if not events:
+    if not database.events:
         print("No events available.")
         return
 
@@ -110,7 +135,7 @@ def list_by_type():
     found = False
     print(f"\n--- {search_type} Events ---")
 
-    for event_id, event in events.items():
+    for event_id, event in database.events.items():
         if event.get("type") == search_type:
             print(
                 f"ID: {event_id} | Name: {event['name']} | Capacity: {len(event['attendees'])}/{event['max_attendees']}")
@@ -122,7 +147,7 @@ def list_by_type():
 def edit_event():
     """Edits an existing event by ID (soft update)."""
     event_id = input("Enter the Event ID to edit: ")
-    if event_id not in events:
+    if event_id not in database.events:
         print("Error: Event ID not found")
         return
 
@@ -133,17 +158,17 @@ def edit_event():
     choice = input("Enter your choice (1-3): ")
 
     if choice == '1':
-        events[event_id]['name'] = input("Enter new name: ")
+        database.events[event_id]['name'] = input("Enter new name: ")
 
     elif choice == '2':
         print("Enter the new Event Date:")
-        events[event_id]['month'] = input("Month: ")
+        database.events[event_id]['month'] = input("Month: ")
 
         # --- Day Validation ---
         while True:
             day = input("Day (1-31): ")
             if day.isdigit() and 1 <= int(day) <= 31:
-                events[event_id]['day'] = day
+                database.events[event_id]['day'] = day
                 break  # Exits the loop if the input is valid
             else:
                 print("Error: Please enter a valid number for the day (1-31).")
@@ -152,19 +177,17 @@ def edit_event():
         while True:
             year = input("Year (YYYY): ")
             if year.isdigit() and len(year) == 4:
-                events[event_id]['year'] = year
+                database.events[event_id]['year'] = year
                 break  # Exits the loop if the input is valid
             else:
                 print("Error: Please enter a valid 4-digit year.")
 
     elif choice == '3':
-        events[event_id]['time'] = input("Enter new time: ")
+        database.events[event_id]['time'] = input("Enter new time: ")
 
     else:
         print("Invalid choice.")
         return  # Stops the function early so the success message doesn't print
+    database.save_events(database.events)
 
     print("Event updated successfully!")
-
-
-
