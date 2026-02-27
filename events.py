@@ -155,8 +155,7 @@ def edit_event():
     print(f"What would you like to edit? ")
     print(f"1. Name")
     print(f"2. Date")
-    print(f"3. Time")
-    choice = input("Enter your choice (1-3): ")
+    choice = input("Enter your choice: ")
 
     if choice == '1':
         database.events[event_id]['name'] = input("Enter new name: ")
@@ -170,5 +169,6 @@ def edit_event():
     database.save_events(database.events)
 
     print("Event updated successfully!")
+
 
 
