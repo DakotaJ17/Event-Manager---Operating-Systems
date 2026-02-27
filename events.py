@@ -20,7 +20,8 @@ def create_event():
         "2": "Conference",
         "3": "Concert",
         "4": "Social",
-        "5": "Wedding"
+        "5": "Wedding",
+        "6": "Other"
     }
 
     # Logic for "Other" or custom input
@@ -191,3 +192,4 @@ def edit_event():
     database.save_events(database.events)
 
     print("Event updated successfully!")
+
